@@ -1,9 +1,51 @@
+import { useEffect, useState } from "react";
+import {
+  urlClient,
+  LENS_HUB_CONTRACT_ADDRESS,
+  queryRecommendedProfile,
+  queryExplorePublications,
+} from "./queries";
+import LENSHUB from "./lenshub.json";
+import { ethers } from "ethers";
+import { Box, Button, Image } from "@chakra-ui/react";
+
 function App() {
-  return (
-    <div className="app">
-      
-    </div>
-  );
+  const [account, setAccount] = useState(null);
+  const [profiles, setProfiles] = useState([]);
+  const [posts, setPosts] = useState([]);
+
+  async function signIn() {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    setAccount(accounts[0]);
+  }
+
+  async function getRecommendedProfiles() {
+    const response = await urlClient.query(queryRecommendedProfile).toPromise();
+    const profiles = response.data.recommendedProfiles.slice(0, 5);
+    setProfiles(profiles);
+  }
+
+  async function getPosts() {
+    const response = await urlClient
+      .query(queryExplorePublications)
+      .toPromise();
+    const posts = response.data.explorePublications.items.filter((post) => {
+      if (post.profile) return post;
+      return "";
+    });
+    setPosts(posts);
+  }
+
+  async function follow(id) {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.contract(
+      LENS_HUB_CONTRACT_ADDRESS, LENSHUB, provider.getSigner()
+    )
+  }
+
+  return <div className="app"></div>;
 }
 
 export default App;
