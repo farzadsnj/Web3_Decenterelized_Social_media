@@ -6,7 +6,7 @@ import {
   queryExplorePublications,
 } from "./queries";
 import LENSHUB from "./lenshub";
-import { ethers } from "ethers";
+import * as ethers from "ethers";
 import { Box, Button, Image } from "@chakra-ui/react";
 
 function App() {
@@ -22,9 +22,7 @@ function App() {
   }
 
   async function getRecommendedProfiles() {
-    const response = await urlClient
-      .query(queryRecommendedProfile)
-      .toPromise();
+    const response = await urlClient.query(queryRecommendedProfile).toPromise();
     const profiles = response.data.recommendedProfiles.slice(0, 5);
     setProfiles(profiles);
   }
@@ -42,7 +40,7 @@ function App() {
   }
 
   async function follow(id) {
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
     const contract = new ethers.Contract(
       LENS_HUB_CONTRACT_ADDRESS,
       LENSHUB,
